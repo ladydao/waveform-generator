@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Waveform Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Audio Waveform Generator</h1>
+        
+        <form id="uploadForm" class="space-y-4">
+            <div class="flex items-center justify-center w-full">
+                <label for="audioFile" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <svg class="w-6 h-6 mb-3 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                        </svg>
+                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-500">MP3, WAV, or OGG (MAX. 10MB)</p>
+                    </div>
+                    <input id="audioFile" type="file" accept="audio/*" class="hidden" />
+                </label>
+            </div>
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
+                Generate Waveform
+            </button>
+        </form>
+
+        <div id="result" class="mt-6 hidden">
+            <h2 class="text-xl font-semibold mb-3 text-gray-700">Waveform Result</h2>
+            <img id="waveformImage" src="" alt="Audio Waveform" class="w-full rounded-lg shadow-md">
+        </div>
+
+        <div id="spinner" class="hidden mt-6 flex justify-center">
+            <div class="spinner w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+        </div>
+
+        <div id="error" class="hidden mt-4 text-red-500 text-center"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const resultDiv = document.getElementById('result');
+        const waveformImage = document.getElementById('waveformImage');
+        const spinner = document.getElementById('spinner');
+        const errorDiv = document.getElementById('error');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('audioFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showError('Please select an audio file.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('audio', file);
+
+            try {
+                showSpinner();
+                const response = await axios.post('/generate-waveform', formData, {
+                    responseType: 'blob'
+                });
+
+                const url = URL.createObjectURL(response.data);
+                waveformImage.src = url;
+                showResult();
+            } catch (error) {
+                showError('Error generating waveform. Please try again.');
+                console.error('Error:', error);
+            } finally {
+                hideSpinner();
+            }
+        });
+
+        function showSpinner() {
+            spinner.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+            errorDiv.classList.add('hidden');
+        }
+
+        function hideSpinner() {
+            spinner.classList.add('hidden');
+        }
+
+        function showResult() {
+            resultDiv.classList.remove('hidden');
+        }
+
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
