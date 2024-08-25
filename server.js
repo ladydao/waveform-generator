@@ -59,7 +59,6 @@ const executeCommand = (command) => new Promise((resolve, reject) => {
       reject(error);
     } else {
       console.log('Command executed successfully');
-      console.log('stdout:', stdout);
       resolve();
     }
   });
@@ -89,7 +88,6 @@ const handleGenerateVisualization = (generateCommand) => async (req, res) => {
 
   try {
     const command = generateCommand(inputFile, outputFile);
-    console.log('Executing command:', command);
     await executeCommand(command);
     
     // Check if the output file exists before sending
