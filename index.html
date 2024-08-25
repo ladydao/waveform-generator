@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Visualization Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .drop-zone { border: 2px dashed #ccc; transition: all 0.3s ease; }
+        .drop-zone:hover, .drop-zone.dragover { border-color: #4A90E2; background-color: #F0F8FF; }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .spinner { animation: spin 1s linear infinite; }
+    </style>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
@@ -13,47 +22,50 @@
                 Audio Visualization Generator
             </h1>
 
-            <div class="flex items-center justify-center w-full mb-4">
-                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                        <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                        </svg>
-                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                        <p class="text-xs text-gray-500">MP3, WAV, or OGG (MAX. 100MB)</p>
-                    </div>
-                    <input id="dropzone-file" type="file" class="hidden" accept=".mp3,.wav,.ogg" />
-                </label>
+            <div id="drop-zone" class="drop-zone flex items-center justify-center w-full mb-4 p-6 cursor-pointer">
+                <div class="flex flex-col items-center justify-center">
+                    <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"></path>
+                    </svg>
+                    <p class="font-semibold">Click to upload or drag and drop</p>
+                    <p class="text-sm text-gray-500">MP3, WAV, or OGG (MAX. 100MB)</p>
+                </div>
             </div>
+            <input type="file" id="fileInput" class="hidden" accept=".mp3,.wav,.ogg">
 
             <div class="mb-4">
                 <p class="mb-2">Choose visualization type:</p>
                 <div class="flex space-x-4">
                     <label class="inline-flex items-center">
-                        <input type="radio" class="form-radio" name="vizType" value="waveform" checked>
+                        <input type="radio" name="visualizationType" value="waveform" checked class="form-radio text-blue-500">
                         <span class="ml-2">Waveform</span>
                     </label>
                     <label class="inline-flex items-center">
-                        <input type="radio" class="form-radio" name="vizType" value="spectrogram">
+                        <input type="radio" name="visualizationType" value="spectrogram" class="form-radio text-blue-500">
                         <span class="ml-2">Spectrogram</span>
                     </label>
                 </div>
             </div>
 
-            <button id="generateBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-                Generate Visualization
+            <button id="generateBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                Get Image
             </button>
 
-            <div id="result" class="mt-6 hidden">
-                <h2 id="visualization-result" class="text-xl font-semibold mb-3 text-gray-700">Visualization Result</h2>
-                <img id="resultImage" class="w-full rounded-lg shadow-md" alt="Visualization Result">
-                <a id="downloadBtn" href="#" download="visualization.png" class="mt-4 inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-                    Download Image
-                </a>
+            <div id="status" class="mt-4 text-center hidden">
+                <div class="flex items-center justify-center">
+                    <svg class="animate-spin h-5 w-5 mr-3 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p id="statusText" class="text-blue-500">Processing audio file...</p>
+                </div>
             </div>
 
-            <div id="spinner" class="hidden mt-6 flex justify-center">
-                <div class="spinner w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <div id="result" class="mt-6 hidden">
+                <img id="resultImage" src="" alt="Visualization Result" class="w-full rounded-lg shadow-md">
+                <a id="downloadBtn" href="#" class="mt-4 inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out" download="visualization.png">
+                    Download Image
+                </a>
             </div>
 
             <div id="error" class="hidden mt-4 text-red-500 text-center"></div>
@@ -61,18 +73,68 @@
     </div>
 
     <script>
-        const dropzone = document.getElementById('dropzone-file');
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('fileInput');
         const generateBtn = document.getElementById('generateBtn');
+        const status = document.getElementById('status');
+        const statusText = document.getElementById('statusText');
         const result = document.getElementById('result');
         const resultImage = document.getElementById('resultImage');
-        const spinner = document.getElementById('spinner');
-        const error = document.getElementById('error');
         const downloadBtn = document.getElementById('downloadBtn');
+        const error = document.getElementById('error');
+
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropZone.classList.add('dragover');
+        }
+
+        function unhighlight() {
+            dropZone.classList.remove('dragover');
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            updateDropZoneText(files[0].name);
+        }
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                updateDropZoneText(e.target.files[0].name);
+            }
+        });
+
+        function updateDropZoneText(fileName) {
+            const textElement = dropZone.querySelector('p.font-semibold');
+            textElement.textContent = `File selected: ${fileName}`;
+        }
 
         generateBtn.addEventListener('click', generateVisualization);
 
         async function generateVisualization() {
-            const file = dropzone.files[0];
+            const file = fileInput.files[0];
             if (!file) {
                 showError('Please select an audio file.');
                 return;
@@ -81,50 +143,53 @@
             const formData = new FormData();
             formData.append('audio', file);
 
-            const vizType = document.querySelector('input[name="vizType"]:checked').value;
-            const endpoint = vizType === 'waveform' ? '/generate-waveform' : '/generate-spectrogram';
-
-            showSpinner();
+            const visualizationType = document.querySelector('input[name="visualizationType"]:checked').value;
+            const endpoint = visualizationType === 'waveform' ? '/generate-waveform' : '/generate-spectrogram';
 
             try {
+                showStatus('Creating waveform image...');
                 const response = await fetch(endpoint, {
                     method: 'POST',
                     body: formData
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to generate visualization');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const blob = await response.blob();
                 const imageUrl = URL.createObjectURL(blob);
-                resultImage.src = imageUrl;
-                downloadBtn.href = imageUrl;
-                showResult();
-            } catch (err) {
-                showError(err.message);
+
+                showResult(imageUrl);
+            } catch (error) {
+                showError('Error generating visualization. Please try again.');
+                console.error('Error:', error);
             } finally {
-                hideSpinner();
+                hideStatus();
             }
         }
 
-        function showSpinner() {
-            spinner.classList.remove('hidden');
-            result.classList.add('hidden');
+        function showStatus(message) {
+            statusText.textContent = message;
+            status.classList.remove('hidden');
             error.classList.add('hidden');
+            result.classList.add('hidden');
         }
 
-        function hideSpinner() {
-            spinner.classList.add('hidden');
+        function hideStatus() {
+            status.classList.add('hidden');
         }
 
-        function showResult() {
+        function showResult(imageUrl) {
+            resultImage.src = imageUrl;
+            downloadBtn.href = imageUrl;
             result.classList.remove('hidden');
         }
 
         function showError(message) {
             error.textContent = message;
             error.classList.remove('hidden');
+            status.classList.add('hidden');
         }
     </script>
 </body>
