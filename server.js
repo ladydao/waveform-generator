@@ -46,7 +46,7 @@ const generateSpectrogramCommand = (inputFile, outputFile) => `
   ffmpeg -i ${inputFile}  -lavfi "
     aformat=channel_layouts=mono,
     compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,
-    showspectrumpic=s=1000x300:scale=log:fscale=log:stop=8000:legend=0:legend=0,
+    showspectrumpic=s=1000x300:scale=log:fscale=log:stop=8000:legend=0,
     format=gray
   " -frames:v 1 ${outputFile}
 `;
@@ -59,6 +59,7 @@ const executeCommand = (command) => new Promise((resolve, reject) => {
       reject(error);
     } else {
       console.log('Command executed successfully');
+      console.log('stdout:', stdout);
       resolve();
     }
   });
@@ -88,6 +89,7 @@ const handleGenerateVisualization = (generateCommand) => async (req, res) => {
 
   try {
     const command = generateCommand(inputFile, outputFile);
+    console.log('Executing command:', command);
     await executeCommand(command);
     
     // Check if the output file exists before sending
