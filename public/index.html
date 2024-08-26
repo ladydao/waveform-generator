@@ -5,53 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Visualization Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .drop-zone { border: 2px dashed #ccc; transition: all 0.3s ease; }
-        .drop-zone:hover, .drop-zone.dragover { border-color: #4A90E2; background-color: #F0F8FF; }
-        @keyframes spin { 
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .spinner { animation: spin 1s linear infinite; }
-    </style>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
         <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md mx-auto">
-            <h1 id="audio-visualization-generator" class="text-2xl font-bold mb-6 text-center text-gray-800">
-                Audio Visualization Generator
-            </h1>
+            <h1 id="audio-visualization-generator" class="text-2xl font-bold mb-6 text-center text-gray-800">Audio Visualization Generator</h1>
 
-            <div id="drop-zone" class="drop-zone flex items-center justify-center w-full mb-4 p-6 cursor-pointer">
+            <div id="drop-zone" class="drop-zone flex items-center justify-center w-full mb-4 p-6 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer">
                 <div class="flex flex-col items-center justify-center">
                     <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"></path>
                     </svg>
-                    <p class="font-semibold">Click to upload or drag and drop</p>
-                    <p class="text-sm text-gray-500">MP3, WAV, or OGG (MAX. 100MB)</p>
+                    <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                    <p class="text-xs text-gray-500">MP3, WAV, or OGG (MAX. 100MB)</p>
                 </div>
             </div>
-            <input type="file" id="fileInput" class="hidden" accept=".mp3,.wav,.ogg">
 
             <div id="fileInfo" class="mb-4 p-4 bg-gray-100 rounded-lg hidden">
                 <h2 class="font-bold text-lg mb-2">File Information</h2>
-                <p id="fileName" class="mb-1"></p>
-                <p id="fileType" class="mb-1"></p>
-                <p id="fileSize" class="mb-1"></p>
-                <p id="fileDuration" class="mb-1"></p>
+                <p id="fileName"></p>
+                <p id="fileSize"></p>
+                <p id="fileDuration"></p>
+            </div>
+
+            <div id="audioPlayerContainer" class="mb-4 hidden">
+                <audio id="audioPlayer" controls class="w-full"></audio>
             </div>
 
             <div class="mb-4">
-                <p class="mb-2 text-center font-semibold">Choose visualization type:</p>
+                <p class="mb-2">Choose visualization type:</p>
                 <div class="flex space-x-4">
-                    <button id="waveformBtn" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded transition duration-300 ease-in-out">
-                        Waveform
-                    </button>
-                    <button id="spectrogramBtn" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition duration-300 ease-in-out">
-                        Spectrogram
-                    </button>
+                    <label class="inline-flex items-center">
+                        <input type="radio" class="form-radio" name="visualizationType" value="waveform" checked>
+                        <span class="ml-2">Waveform</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" class="form-radio" name="visualizationType" value="spectrogram">
+                        <span class="ml-2">Spectrogram</span>
+                    </label>
                 </div>
             </div>
+
+            <button id="generateBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                Generate Visualization
+            </button>
 
             <div id="status" class="mt-4 text-center hidden">
                 <div class="flex items-center justify-center">
@@ -59,13 +56,13 @@
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    <p id="statusText" class="text-blue-500">Generating visualization...</p>
+                    <span>Generating visualization...</span>
                 </div>
             </div>
 
             <div id="result" class="mt-6 hidden">
-                <img id="resultImage" src="" alt="Visualization Result" class="w-full rounded-lg shadow-md">
-                <a id="downloadBtn" href="#" class="mt-4 inline-block bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out" download="visualization.png">
+                <img id="resultImage" class="w-full rounded-lg shadow-md" alt="Visualization Result">
+                <a id="downloadBtn" class="mt-4 inline-block bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out" download="visualization.png">
                     Download Image
                 </a>
             </div>
@@ -74,155 +71,6 @@
         </div>
     </div>
 
-    <script>
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('fileInput');
-        const waveformBtn = document.getElementById('waveformBtn');
-        const spectrogramBtn = document.getElementById('spectrogramBtn');
-        const status = document.getElementById('status');
-        const statusText = document.getElementById('statusText');
-        const result = document.getElementById('result');
-        const resultImage = document.getElementById('resultImage');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const error = document.getElementById('error');
-        const fileInfo = document.getElementById('fileInfo');
-        const fileName = document.getElementById('fileName');
-        const fileType = document.getElementById('fileType');
-        const fileSize = document.getElementById('fileSize');
-        const fileDuration = document.getElementById('fileDuration');
-
-        // Drag and drop functionality
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false);
-        });
-
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, highlight, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, unhighlight, false);
-        });
-
-        function highlight() {
-            dropZone.classList.add('dragover');
-        }
-
-        function unhighlight() {
-            dropZone.classList.remove('dragover');
-        }
-
-        dropZone.addEventListener('drop', handleDrop, false);
-
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            fileInput.files = files;
-            updateFileInfo(files[0]);
-        }
-
-        dropZone.addEventListener('click', () => fileInput.click());
-
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                updateFileInfo(e.target.files[0]);
-            }
-        });
-
-        function updateFileInfo(file) {
-            const textElement = dropZone.querySelector('p.font-semibold');
-            textElement.textContent = `File selected: ${file.name}`;
-
-            fileName.textContent = `Name: ${file.name}`;
-            fileType.textContent = `Type: ${file.type}`;
-            fileSize.textContent = `Size: ${formatFileSize(file.size)}`;
-
-            const audio = new Audio(URL.createObjectURL(file));
-            audio.addEventListener('loadedmetadata', () => {
-                fileDuration.textContent = `Duration: ${formatDuration(audio.duration)}`;
-                fileInfo.classList.remove('hidden');
-            });
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        function formatDuration(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = Math.floor(seconds % 60);
-            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-        }
-
-        waveformBtn.addEventListener('click', () => generateVisualization('waveform'));
-        spectrogramBtn.addEventListener('click', () => generateVisualization('spectrogram'));
-
-        async function generateVisualization(type) {
-            const file = fileInput.files[0];
-            if (!file) {
-                showError('Please select an audio file.');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('audio', file);
-
-            const endpoint = type === 'waveform' ? '/generate-waveform' : '/generate-spectrogram';
-
-            try {
-                showStatus(`Generating ${type}...`);
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const blob = await response.blob();
-                const imageUrl = URL.createObjectURL(blob);
-
-                showResult(imageUrl);
-            } catch (error) {
-                showError(`Error generating ${type}. Please try again.`);
-                console.error('Error:', error);
-            } finally {
-                hideStatus();
-            }
-        }
-
-        function showStatus(message) {
-            statusText.textContent = message;
-            status.classList.remove('hidden');
-            error.classList.add('hidden');
-            result.classList.add('hidden');
-        }
-
-        function hideStatus() {
-            status.classList.add('hidden');
-        }
-
-        function showResult(imageUrl) {
-            resultImage.src = imageUrl;
-            downloadBtn.href = imageUrl;
-            result.classList.remove('hidden');
-        }
-
-        function showError(message) {
-            error.textContent = message;
-            error.classList.remove('hidden');
-            status.classList.add('hidden');
-        }
-    </script>
+    <script src="js/main.js"></script>
 </body>
 </html>
