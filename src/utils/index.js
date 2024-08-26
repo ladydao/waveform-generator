@@ -12,21 +12,18 @@ exports.generateRandomFileName = () => `${crypto.randomBytes(16).toString('hex')
 
 exports.generateWaveformCommand = (inputFile, outputFile) => `
   ffmpeg -i ${inputFile} -filter_complex "
-    aformat=channel_layouts=stereo|mono,
-    pan=mono|c0=.5*c0+.5*c1,
-    loudnorm=I=-16:TP=-1.5:LRA=11,
-    compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,
     aformat=channel_layouts=mono,
-    showwavespic=s=1000x200:colors=#333333
+    compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,
+    showwavespic=s=1920x1080:colors=#333333
   " -frames:v 1 ${outputFile}
 `;
 
 exports.generateSpectrogramCommand = (inputFile, outputFile) => `
-  ffmpeg -i ${inputFile}  -lavfi "
+  ffmpeg -i ${inputFile} -lavfi "
     aformat=channel_layouts=mono,
     compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,
-    showspectrumpic=s=1000x300:scale=log:fscale=log:stop=8000:legend=0,
-    format=gray
+    showspectrumpic=s=1920x1080:mode=separate:color=intensity:scale=log:
+    fscale=log:stop=20000:start=20:gain=5:legend=0
   " -frames:v 1 ${outputFile}
 `;
 
