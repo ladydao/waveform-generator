@@ -34,22 +34,16 @@
             <input type="file" id="fileInput" class="hidden" accept=".mp3,.wav,.ogg">
 
             <div class="mb-4">
-                <p class="mb-2">Choose visualization type:</p>
+                <p class="mb-2 text-center font-semibold">Choose visualization type:</p>
                 <div class="flex space-x-4">
-                    <label class="inline-flex items-center">
-                        <input type="radio" name="visualizationType" value="waveform" checked class="form-radio text-blue-500">
-                        <span class="ml-2">Waveform</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="radio" name="visualizationType" value="spectrogram" class="form-radio text-blue-500">
-                        <span class="ml-2">Spectrogram</span>
-                    </label>
+                    <button id="waveformBtn" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded transition duration-300 ease-in-out">
+                        Waveform
+                    </button>
+                    <button id="spectrogramBtn" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition duration-300 ease-in-out">
+                        Spectrogram
+                    </button>
                 </div>
             </div>
-
-            <button id="generateBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
-                Get Image
-            </button>
 
             <div id="status" class="mt-4 text-center hidden">
                 <div class="flex items-center justify-center">
@@ -57,13 +51,13 @@
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    <p id="statusText" class="text-blue-500">Processing audio file...</p>
+                    <p id="statusText" class="text-blue-500">Generating visualization...</p>
                 </div>
             </div>
 
             <div id="result" class="mt-6 hidden">
                 <img id="resultImage" src="" alt="Visualization Result" class="w-full rounded-lg shadow-md">
-                <a id="downloadBtn" href="#" class="mt-4 inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out" download="visualization.png">
+                <a id="downloadBtn" href="#" class="mt-4 inline-block bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out" download="visualization.png">
                     Download Image
                 </a>
             </div>
@@ -75,7 +69,8 @@
     <script>
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('fileInput');
-        const generateBtn = document.getElementById('generateBtn');
+        const waveformBtn = document.getElementById('waveformBtn');
+        const spectrogramBtn = document.getElementById('spectrogramBtn');
         const status = document.getElementById('status');
         const statusText = document.getElementById('statusText');
         const result = document.getElementById('result');
@@ -131,9 +126,10 @@
             textElement.textContent = `File selected: ${fileName}`;
         }
 
-        generateBtn.addEventListener('click', generateVisualization);
+        waveformBtn.addEventListener('click', () => generateVisualization('waveform'));
+        spectrogramBtn.addEventListener('click', () => generateVisualization('spectrogram'));
 
-        async function generateVisualization() {
+        async function generateVisualization(type) {
             const file = fileInput.files[0];
             if (!file) {
                 showError('Please select an audio file.');
@@ -143,11 +139,10 @@
             const formData = new FormData();
             formData.append('audio', file);
 
-            const visualizationType = document.querySelector('input[name="visualizationType"]:checked').value;
-            const endpoint = visualizationType === 'waveform' ? '/generate-waveform' : '/generate-spectrogram';
+            const endpoint = type === 'waveform' ? '/generate-waveform' : '/generate-spectrogram';
 
             try {
-                showStatus('Creating waveform image...');
+                showStatus(`Generating ${type}...`);
                 const response = await fetch(endpoint, {
                     method: 'POST',
                     body: formData
@@ -162,7 +157,7 @@
 
                 showResult(imageUrl);
             } catch (error) {
-                showError('Error generating visualization. Please try again.');
+                showError(`Error generating ${type}. Please try again.`);
                 console.error('Error:', error);
             } finally {
                 hideStatus();

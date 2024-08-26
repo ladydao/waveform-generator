@@ -1,5 +1,5 @@
 const multer = require('multer');
-const { UPLOAD_DIR, FILE_SIZE_LIMIT, ALLOWED_MIME_TYPES } = require('./config');
+const { UPLOAD_DIR, FILE_SIZE_LIMIT, ALLOWED_MIME_TYPES } = require('../config');
 
 exports.createUploadMiddleware = () => multer({
   dest: UPLOAD_DIR,

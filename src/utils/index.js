@@ -1,7 +1,7 @@
 const fs = require('fs').promises;
 const crypto = require('crypto');
 const { exec } = require('child_process');
-const { UPLOAD_DIR, OUTPUT_DIR } = require('./config');
+const { UPLOAD_DIR, OUTPUT_DIR } = require('../config');
 
 exports.ensureDirectoriesExist = async () => {
   await fs.mkdir(UPLOAD_DIR, { recursive: true });
