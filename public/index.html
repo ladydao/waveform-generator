@@ -33,6 +33,14 @@
             </div>
             <input type="file" id="fileInput" class="hidden" accept=".mp3,.wav,.ogg">
 
+            <div id="fileInfo" class="mb-4 p-4 bg-gray-100 rounded-lg hidden">
+                <h2 class="font-bold text-lg mb-2">File Information</h2>
+                <p id="fileName" class="mb-1"></p>
+                <p id="fileType" class="mb-1"></p>
+                <p id="fileSize" class="mb-1"></p>
+                <p id="fileDuration" class="mb-1"></p>
+            </div>
+
             <div class="mb-4">
                 <p class="mb-2 text-center font-semibold">Choose visualization type:</p>
                 <div class="flex space-x-4">
@@ -77,6 +85,11 @@
         const resultImage = document.getElementById('resultImage');
         const downloadBtn = document.getElementById('downloadBtn');
         const error = document.getElementById('error');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileType = document.getElementById('fileType');
+        const fileSize = document.getElementById('fileSize');
+        const fileDuration = document.getElementById('fileDuration');
 
         // Drag and drop functionality
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -110,20 +123,44 @@
             const dt = e.dataTransfer;
             const files = dt.files;
             fileInput.files = files;
-            updateDropZoneText(files[0].name);
+            updateFileInfo(files[0]);
         }
 
         dropZone.addEventListener('click', () => fileInput.click());
 
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
-                updateDropZoneText(e.target.files[0].name);
+                updateFileInfo(e.target.files[0]);
             }
         });
 
-        function updateDropZoneText(fileName) {
+        function updateFileInfo(file) {
             const textElement = dropZone.querySelector('p.font-semibold');
-            textElement.textContent = `File selected: ${fileName}`;
+            textElement.textContent = `File selected: ${file.name}`;
+
+            fileName.textContent = `Name: ${file.name}`;
+            fileType.textContent = `Type: ${file.type}`;
+            fileSize.textContent = `Size: ${formatFileSize(file.size)}`;
+
+            const audio = new Audio(URL.createObjectURL(file));
+            audio.addEventListener('loadedmetadata', () => {
+                fileDuration.textContent = `Duration: ${formatDuration(audio.duration)}`;
+                fileInfo.classList.remove('hidden');
+            });
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function formatDuration(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
         }
 
         waveformBtn.addEventListener('click', () => generateVisualization('waveform'));
