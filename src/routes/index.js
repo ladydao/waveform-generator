@@ -2,21 +2,19 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
 const { OUTPUT_DIR } = require('../config');
-const { generateRandomFileName, cleanupFiles, generateWaveform, generateSpectrogram } = require('../utils');
+const { generateFileNameFromHash, cleanupFiles, generateWaveform, generateSpectrogram } = require('../utils');
 const { createUploadMiddleware } = require('../middleware');
 
 const handleVisualization = (generateFunction) => async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No audio file uploaded' });
   }
-
   const inputFile = req.file.path;
-  const outputFileName = generateRandomFileName();
+  const outputFileName = await generateFileNameFromHash(inputFile) + ".png";
   const outputFile = path.join(OUTPUT_DIR, outputFileName);
 
   try {
     await generateFunction(inputFile, outputFile);
-
     await fs.access(outputFile);
     res.sendFile(outputFile, { root: process.cwd() });
   } catch (error) {
