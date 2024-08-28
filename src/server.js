@@ -1,13 +1,14 @@
 const express = require('express');
+const helmet = require('helmet');
 const { PORT } = require('./config');
 const { ensureDirectoriesExist } = require('./utils');
 const { errorHandler } = require('./middleware');
 const { setupRoutes } = require('./routes');
 
 const app = express();
-
 setupRoutes(app);
 
+app.use(helmet());
 app.use(errorHandler);
 
 ensureDirectoriesExist()
