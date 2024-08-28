@@ -12,8 +12,9 @@ app.use(errorHandler);
 
 ensureDirectoriesExist()
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+    const port = process.env.PORT || PORT;
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
     });
   })
   .catch((error) => {
