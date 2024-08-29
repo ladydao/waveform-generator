@@ -18,7 +18,7 @@ Generate beautiful waveform and spectrogram visualizations from your audio files
 
 ## Prerequisites
 
-- Node.js (v14 or later)
+- Node.js (v18 or later)
 - FFmpeg
 ## Installation
 
