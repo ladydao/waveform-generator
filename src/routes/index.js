@@ -1,14 +1,12 @@
+// src/routes/index.js
 const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
 const { OUTPUT_DIR } = require('../config');
 const { generateFileNameFromHash, cleanupFiles, generateWaveform, generateSpectrogram } = require('../utils');
-const { createUploadMiddleware } = require('../middleware');
+const { createUploadMiddleware, validateAudioFile } = require('../middleware');
 
 const handleVisualization = (generateFunction) => async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No audio file uploaded' });
-  }
   const inputFile = req.file.path;
   const outputFileName = await generateFileNameFromHash(inputFile) + ".png";
   const outputFile = path.join(OUTPUT_DIR, outputFileName);
@@ -32,8 +30,8 @@ const setupRoutes = (app) => {
     res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
   });
 
-  app.post('/generate-waveform', createUploadMiddleware(), handleVisualization(generateWaveform));
-  app.post('/generate-spectrogram', createUploadMiddleware(), handleVisualization(generateSpectrogram));
+  app.post('/generate-waveform', createUploadMiddleware(), validateAudioFile, handleVisualization(generateWaveform));
+  app.post('/generate-spectrogram', createUploadMiddleware(), validateAudioFile, handleVisualization(generateSpectrogram));
 };
 
 module.exports = { setupRoutes };
