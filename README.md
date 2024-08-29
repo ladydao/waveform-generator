@@ -19,8 +19,7 @@ Generate beautiful waveform and spectrogram visualizations from your audio files
 ## Prerequisites
 
 - Node.js (v14 or later)
-- FFmpeg installed on your system
-
+- FFmpeg
 ## Installation
 
 1. Clone the repository:
@@ -55,28 +54,6 @@ Generate beautiful waveform and spectrogram visualizations from your audio files
 2. Choose between waveform or spectrogram visualization
 3. Click "Generate Visualization"
 4. Once generated, you can view and download the visualization
-
-## Project Structure
-
-```
-waveform-generator/
-├── src/
-│   ├── config/
-│   ├── middleware/
-│   ├── routes/
-│   ├── services/
-│   ├── utils/
-│   └── server.js
-├── public/
-│   ├── css/
-│   ├── js/
-│   └── index.html
-├── uploads/
-├── output/
-├── tests/
-├── .env
-└── package.json
-```
 
 ## Contributing
 
