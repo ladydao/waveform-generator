@@ -48,13 +48,6 @@ Generate beautiful waveform and spectrogram visualizations from your audio files
 
 5. Open your browser and navigate to `http://localhost:3000`
 
-## Usage
-
-1. Click on the upload area or drag and drop an audio file
-2. Choose between waveform or spectrogram visualization
-3. Click "Generate Visualization"
-4. Once generated, you can view and download the visualization
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -62,9 +55,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the ISC License.
-
-## Acknowledgements
-
-- FFmpeg for audio processing
-- Tailwind CSS for styling
-- Express.js for the backend framework
