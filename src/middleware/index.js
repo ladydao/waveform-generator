@@ -27,13 +27,9 @@ exports.validateAudioFile = (req, res, next) => {
     return res.status(400).json({ error: 'No audio file uploaded' });
   }
 
-  // Explicit file size check
   if (req.file.size > FILE_SIZE_LIMIT) {
     return res.status(400).json({ error: `File size exceeds the limit of ${FILE_SIZE_LIMIT / (1024 * 1024)}MB.` });
   }
-
-  // Additional checks can be performed here if needed
-  // For example, checking audio duration, bit rate, etc.
 
   next();
 };
@@ -42,7 +38,7 @@ exports.errorHandler = (err, req, res, next) => {
   console.error(err.stack);
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ error: `File size exceeds the limit of ${FILE_SIZE_LIMIT / (1024 * 1024)}MB.` });
+      return res.status(400).json({ error: 'File size exceeds the limit of 100MB.!' });
     }
   }
   res.status(500).json({ error: err.message || 'Something went wrong!' });
