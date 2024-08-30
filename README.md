@@ -1,20 +1,6 @@
 # Audio Visualization Generator
 
-Generate beautiful waveform and spectrogram visualizations from your audio files.
-
-## Features
-
-- Upload audio files (MP3, WAV, OGG) up to 100MB
-- Generate waveform or spectrogram visualizations
-- Preview uploaded audio with built-in audio player
-- Download high-quality PNG visualizations
-- Responsive web interface
-
-## Tech Stack
-
-- Backend: Node.js with Express
-- Frontend: JavaScript, Tailwind
-- Audio Processing: FFmpeg
+Generate waveform and spectrogram visualizations from your audio files.
 
 ## Prerequisites
 
