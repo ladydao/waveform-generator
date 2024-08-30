@@ -1,12 +1,34 @@
 const express = require('express');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const winston = require('winston');
 const { PORT } = require('./config');
 const { ensureDirectoriesExist } = require('./utils');
 const { errorHandler } = require('./middleware');
 const { setupRoutes } = require('./routes');
 
 const app = express();
+
+// Winston logger configuration
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  defaultMeta: { service: 'audio-visualization-generator' },
+  transports: [
+    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'logs/combined.log' }),
+  ],
+});
+
+// If we're not in production, log to the console as well
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple(),
+  }));
+}
 
 // Rate limiting middleware
 const limiter = rateLimit({
@@ -41,10 +63,13 @@ ensureDirectoriesExist()
   .then(() => {
     const port = process.env.PORT || PORT;
     app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+      logger.info(`Server is running on port ${port}`);
     });
   })
   .catch((error) => {
-    console.error('Failed to create necessary directories:', error);
+    logger.error('Failed to create necessary directories:', error);
     process.exit(1);
   });
+
+// Export logger for use in other modules
+module.exports = { app, logger };
