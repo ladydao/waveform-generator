@@ -3,7 +3,8 @@ const path = require('path');
 const fs = require('fs').promises;
 const { OUTPUT_DIR } = require('../config');
 const { generateFileNameFromHash, cleanupFiles, generateWaveform, generateSpectrogram } = require('../utils');
-const { createUploadMiddleware, validateAudioFile } = require('../middleware');
+const { createUploadMiddleware } = require('../middleware');
+const { validateAudioFile, validateVisualizationType } = require('../middleware/validation');
 const logger = require('../logger');
 
 const handleVisualization = (generateFunction) => async (req, res) => {
@@ -31,8 +32,16 @@ const setupRoutes = (app) => {
     res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
   });
 
-  app.post('/generate-waveform', createUploadMiddleware(), validateAudioFile, handleVisualization(generateWaveform));
-  app.post('/generate-spectrogram', createUploadMiddleware(), validateAudioFile, handleVisualization(generateSpectrogram));
+  app.post(
+    '/generate',
+    createUploadMiddleware(),
+    validateAudioFile,
+    validateVisualizationType,
+    (req, res, next) => {
+      const generateFunction = req.body.visualizationType === 'waveform' ? generateWaveform : generateSpectrogram;
+      handleVisualization(generateFunction)(req, res, next);
+    }
+  );
 
   logger.info('Routes set up successfully');
 };

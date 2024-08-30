@@ -124,12 +124,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function generateVisualization(file, type) {
         const formData = new FormData();
         formData.append('audio', file);
+        formData.append('visualizationType', type);
 
         status.classList.remove('hidden');
         result.classList.add('hidden');
         error.classList.add('hidden');
 
-        fetch(`/generate-${type}`, {
+        fetch('/generate', {
             method: 'POST',
             body: formData
         })
