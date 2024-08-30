@@ -10,7 +10,7 @@ exports.generateFileNameFromHash = async (filePath) => {
   const fileBuffer = await fs.readFile(filePath);
   const hash = crypto.createHash('sha256');
   hash.update(fileBuffer);
-  return `${hash.digest('hex')}`;
+  return `${hash.digest('hex').substring(0, 16)}`;
 };
 
 exports.ensureDirectoriesExist = async () => {
