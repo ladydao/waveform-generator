@@ -1,10 +1,10 @@
-// src/routes/index.js
 const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
 const { OUTPUT_DIR } = require('../config');
 const { generateFileNameFromHash, cleanupFiles, generateWaveform, generateSpectrogram } = require('../utils');
 const { createUploadMiddleware, validateAudioFile } = require('../middleware');
+const logger = require('../logger');
 
 const handleVisualization = (generateFunction) => async (req, res) => {
   const inputFile = req.file.path;
@@ -14,9 +14,10 @@ const handleVisualization = (generateFunction) => async (req, res) => {
   try {
     await generateFunction(inputFile, outputFile);
     await fs.access(outputFile);
+    logger.info(`Visualization generated: ${outputFile}`);
     res.sendFile(outputFile, { root: process.cwd() });
   } catch (error) {
-    console.error(`Error generating visualization: ${error.message}`);
+    logger.error(`Error generating visualization: ${error.message}`);
     res.status(500).json({ error: 'Error generating visualization' });
   } finally {
     await cleanupFiles(inputFile, outputFile);
@@ -32,6 +33,8 @@ const setupRoutes = (app) => {
 
   app.post('/generate-waveform', createUploadMiddleware(), validateAudioFile, handleVisualization(generateWaveform));
   app.post('/generate-spectrogram', createUploadMiddleware(), validateAudioFile, handleVisualization(generateSpectrogram));
+
+  logger.info('Routes set up successfully');
 };
 
 module.exports = { setupRoutes };

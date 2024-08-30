@@ -2,6 +2,7 @@ const fs = require('fs').promises;
 const crypto = require('crypto');
 const { exec } = require('child_process');
 const { UPLOAD_DIR, OUTPUT_DIR } = require('../config');
+const logger = require('../logger');
 
 exports.generateRandomFileName = () => `${crypto.randomBytes(16).toString('hex')}.png`;
 
@@ -13,10 +14,16 @@ exports.generateFileNameFromHash = async (filePath) => {
 };
 
 exports.ensureDirectoriesExist = async () => {
-  await Promise.all([
-    fs.mkdir(UPLOAD_DIR, { recursive: true }),
-    fs.mkdir(OUTPUT_DIR, { recursive: true })
-  ]);
+  try {
+    await Promise.all([
+      fs.mkdir(UPLOAD_DIR, { recursive: true }),
+      fs.mkdir(OUTPUT_DIR, { recursive: true })
+    ]);
+    logger.info('Directories created successfully');
+  } catch (error) {
+    logger.error('Error creating directories:', error);
+    throw error;
+  }
 };
 
 exports.cleanupFiles = async (...files) => {
@@ -24,15 +31,15 @@ exports.cleanupFiles = async (...files) => {
     try {
       await fs.access(file);
       await fs.unlink(file);
-      console.log(`File deleted: ${file}`);
+      logger.info(`File deleted: ${file}`);
     } catch (error) {
-      console.error(`Error deleting file ${file}:`, error.message);
+      logger.error(`Error deleting file ${file}:`, error);
     }
   }));
 };
 
-const waveformParams = '-filter_complex "aformat=channel_layouts=mono,compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,showwavespic=s=1920x1080:colors=#333333"'
-const spectralParams = '-lavfi "aformat=channel_layouts=mono,compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,showspectrumpic=s=1920x1080:mode=separate:color=intensity:scale=log:fscale=log:stop=20000:start=20:gain=5:legend=0"'
+const waveformParams = '-filter_complex "aformat=channel_layouts=mono,compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,showwavespic=s=1920x1080:colors=#333333"';
+const spectralParams = '-lavfi "aformat=channel_layouts=mono,compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,showspectrumpic=s=1920x1080:mode=separate:color=intensity:scale=log:fscale=log:stop=20000:start=20:gain=5:legend=0"';
 
 const generateVisualization = (inputFile, outputFile, params) => {
   return new Promise((resolve, reject) => {
@@ -40,12 +47,12 @@ const generateVisualization = (inputFile, outputFile, params) => {
 
     exec(command, (error, stdout, stderr) => {
       if (error) {
-        console.error('Visualization generation error:', error);
-        console.error('stderr:', stderr);
+        logger.error('Visualization generation error:', error);
+        logger.error('stderr:', stderr);
         reject(error);
       } else {
-        console.log('Visualization generated successfully');
-        console.log('stdout:', stdout);
+        logger.info('Visualization generated successfully');
+        logger.debug('stdout:', stdout);
         resolve();
       }
     });
