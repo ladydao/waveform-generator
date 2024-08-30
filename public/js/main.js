@@ -13,9 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadBtn = document.getElementById('downloadBtn');
     const error = document.getElementById('error');
 
-    const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
-    const ALLOWED_AUDIO_TYPES = ['audio/mpeg', 'audio/wav', 'audio/ogg'];
-
     let selectedFile = null;
 
     dropZone.addEventListener('click', () => {
@@ -42,30 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function handleFile(file) {
-        resetUI();
-        if (!file) {
-            showError('No file selected.');
-            return;
+        if (file && file.type.startsWith('audio/')) {
+            selectedFile = file;
+            displayFileInfo(file);
+            setupAudioPlayer(file);
+        } else {
+            alert('Please select a valid audio file.');
         }
-        if (!validateFileType(file)) {
-            showError('Invalid file type. Please upload an MP3, WAV, or OGG file.');
-            return;
-        }
-        if (!validateFileSize(file)) {
-            showError('File size exceeds the limit of 100MB.');
-            return;
-        }
-        selectedFile = file;
-        displayFileInfo(file);
-        setupAudioPlayer(file);
-    }
-
-    function validateFileType(file) {
-        return ALLOWED_AUDIO_TYPES.includes(file.type);
-    }
-
-    function validateFileSize(file) {
-        return file.size <= MAX_FILE_SIZE;
     }
 
     function displayFileInfo(file) {
@@ -101,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     generateBtn.addEventListener('click', () => {
         if (!selectedFile) {
-            showError('Please select an audio file first.');
+            alert('Please select an audio file first.');
             return;
         }
 
@@ -123,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then(response => {
                 if (!response.ok) {
-                    return response.json().then(err => { throw new Error(err.error || 'Error generating visualization'); });
+                    throw new Error('Error generating visualization');
                 }
                 return response.blob();
             })
@@ -135,20 +115,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 status.classList.add('hidden');
             })
             .catch(err => {
-                showError(err.message);
+                error.textContent = err.message;
+                error.classList.remove('hidden');
+                status.classList.add('hidden');
             });
-    }
-
-    function showError(message) {
-        error.textContent = message;
-        error.classList.remove('hidden');
-        status.classList.add('hidden');
-    }
-
-    function resetUI() {
-        fileInfo.classList.add('hidden');
-        audioPlayerContainer.classList.add('hidden');
-        result.classList.add('hidden');
-        error.classList.add('hidden');
     }
 });
