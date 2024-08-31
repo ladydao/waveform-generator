@@ -24,28 +24,3 @@ exports.upload = () => multer({
     cb(null, true);
   }
 }).single('audio');
-
-exports.validateAudioFile = (req, res, next) => {
-  if (!req.file) {
-    logger.warn('No audio file uploaded');
-    return res.status(400).json({ error: 'No audio file uploaded' });
-  }
-
-  if (req.file.size > FILE_SIZE_LIMIT) {
-    logger.warn(`File size exceeds limit: ${req.file.size} bytes`);
-    return res.status(400).json({ error: `File size exceeds the limit of ${FILE_SIZE_LIMIT / (1024 * 1024)}MB.` });
-  }
-
-  logger.info(`Audio file validated: ${req.file.originalname}`);
-  next();
-};
-
-exports.errorHandler = (err, req, res, next) => {
-  logger.error('Error occurred:', err);
-  if (err instanceof multer.MulterError) {
-    if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ error: 'File size exceeds the limit of 100MB.' });
-    }
-  }
-  res.status(500).json({ error: err.message || 'Something went wrong!' });
-};

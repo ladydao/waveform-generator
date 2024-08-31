@@ -1,6 +1,6 @@
 const helmet = require('helmet');
 
-const helmetConfig = helmet({
+exports.helmetConfig = helmet({
     contentSecurityPolicy: {
         directives: {
             ...helmet.contentSecurityPolicy.getDefaultDirectives(),
@@ -10,5 +10,3 @@ const helmetConfig = helmet({
         },
     },
 });
-
-module.exports = helmetConfig;

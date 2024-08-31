@@ -1,17 +1,21 @@
 const express = require('express');
-const { PORT } = require('./config');
-const { errorHandler } = require('./middleware/upload');
-const { setupRoutes } = require('./routes');
 const logger = require('./logger');
-const limiter = require('./middleware/rateLimit');
-const helmetConfig = require('./middleware/helmet');
+const { PORT } = require('./config');
+const { setupRoutes } = require('./routes');
+const { limiter } = require('./middleware/rateLimit');
+const { helmetConfig } = require('./middleware/helmet');
 const { ensureDirectoriesExist } = require('./utils');
 
 const app = express();
 app.use(helmetConfig);
 app.use(limiter);
 setupRoutes(app);
-app.use(errorHandler);
+
+// Add a generic error handler
+app.use((err, req, res, next) => {
+  logger.error(err.message);
+  res.status(500).send('Internal Server Error');
+});
 
 const startServer = async () => {
   try {
