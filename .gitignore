@@ -1,8 +1,32 @@
 node_modules/
+logs/
+
 audio/
 output/
 uploads/
-logs/
 
 .env
 .vercel
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE specific files
+.vscode/
+.idea/
+
+# Build output
+dist/
+build/
+
+# Dependency lock files
+package-lock.json
+yarn.lock
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+
