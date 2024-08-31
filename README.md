@@ -22,8 +22,8 @@ Generate waveform and spectrogram visualizations from your audio files.
 3. Create a `.env` file in the root directory and add the following (adjust as needed):
    ```
    PORT=3000
-   UPLOAD_DIR=uploads/
-   OUTPUT_DIR=output/
+   UPLOAD_DIR=appdata/uploads/
+   OUTPUT_DIR=appdata/output/
    FILE_SIZE_LIMIT=104857600
    ```
 

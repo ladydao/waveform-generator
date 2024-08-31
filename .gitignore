@@ -1,5 +1,4 @@
 node_modules/
-
 appdata/
 
 .env
@@ -16,6 +15,7 @@ Thumbs.db
 # Build output
 dist/
 build/
+out/
 
 # Dependency lock files
 package-lock.json
@@ -26,6 +26,3 @@ yarn.lock
 
 # Temporary files
 *.tmp
-
-
-
