@@ -4,7 +4,6 @@ const { exec } = require('child_process');
 const { UPLOAD_DIR, OUTPUT_DIR } = require('../config');
 const logger = require('../logger');
 
-
 /**
  * @notice Ensures that the upload and output directories exist
  * @dev Creates the directories if they don't exist
@@ -77,9 +76,6 @@ exports.cleanupFiles = async (...files) => {
   }));
 };
 
-const waveformParams = '-filter_complex "aformat=channel_layouts=mono,compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,showwavespic=s=1920x1080:colors=#333333"';
-const spectralParams = '-lavfi "aformat=channel_layouts=mono,compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,showspectrumpic=s=1920x1080:mode=separate:color=intensity:scale=log:fscale=log:stop=20000:start=20:gain=5:legend=0"';
-
 /**
  * @notice Generates a visualization using FFmpeg
  * @param {string} inputFile - The path to the input audio file
@@ -104,6 +100,10 @@ const generateVisualization = (inputFile, outputFile, params) => {
     });
   });
 };
+
+// FFmpeg parameters for waveform and spectrogram visualizations
+const waveformParams = '-filter_complex "aformat=channel_layouts=mono,compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,showwavespic=s=1920x1080:colors=#333333"';
+const spectralParams = '-lavfi "aformat=channel_layouts=mono,compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,showspectrumpic=s=1920x1080:mode=separate:color=intensity:scale=log:fscale=log:stop=20000:start=20:gain=5:legend=0"';
 
 /**
  * @notice Generates a waveform visualization of an audio file

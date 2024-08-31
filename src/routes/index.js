@@ -2,11 +2,26 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
 const { OUTPUT_DIR } = require('../config');
-const { generateFileNameFromHash, cleanupFiles, generateWaveform, generateSpectrogram } = require('../utils');
-const { createUploadMiddleware } = require('../middleware');
-const { validateAudioFile, validateVisualizationType } = require('../middleware/validation');
 const logger = require('../logger');
+const {
+  generateFileNameFromHash,
+  cleanupFiles,
+  generateWaveform,
+  generateSpectrogram,
+} = require('../utils');
+const { createUploadMiddleware } = require('../middleware/upload');
+const {
+  validateAudioFile,
+  validateVisualizationType
+} = require('../middleware/validation');
 
+// HTTP Status Codes
+const HTTP_STATUS = {
+  OK: 200,
+  INTERNAL_SERVER_ERROR: 500,
+};
+
+// Handle visualization generation
 const handleVisualization = (generateFunction) => async (req, res) => {
   const inputFile = req.file.path;
   const outputFileName = await generateFileNameFromHash(inputFile) + ".png";
@@ -19,12 +34,13 @@ const handleVisualization = (generateFunction) => async (req, res) => {
     res.sendFile(outputFile, { root: process.cwd() });
   } catch (error) {
     logger.error(`Error generating visualization: ${error.message}`);
-    res.status(500).json({ error: 'Error generating visualization' });
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Error generating visualization' });
   } finally {
     await cleanupFiles(inputFile, outputFile);
   }
 };
 
+// Set up application routes
 const setupRoutes = (app) => {
   app.use(express.static(path.join(process.cwd(), 'public')));
 
@@ -38,7 +54,10 @@ const setupRoutes = (app) => {
     validateAudioFile,
     validateVisualizationType,
     (req, res, next) => {
-      const generateFunction = req.body.visualizationType === 'waveform' ? generateWaveform : generateSpectrogram;
+      const generateFunction =
+        req.body.visualizationType === 'waveform'
+          ? generateWaveform
+          : generateSpectrogram;
       handleVisualization(generateFunction)(req, res, next);
     }
   );
