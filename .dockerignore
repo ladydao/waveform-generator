@@ -1,3 +1,14 @@
 audio/
 node_modules/
 npm-debug.log
+appdata/temp_audio/
+.env
+.vscode/
+.idea/
+dist/
+build/
+out/
+package-lock.json
+yarn.lock
+*.log
+*.tmp
