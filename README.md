@@ -1,6 +1,6 @@
 # Audio Visualization Generator
 
-Generate waveform and spectrogram visualizations from your audio files.
+Generate waveform and spectrogram from audio files.
 
 ## Prerequisites
 
