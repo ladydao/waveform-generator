@@ -4,6 +4,26 @@ const { exec } = require('child_process');
 const { UPLOAD_DIR, OUTPUT_DIR } = require('../config');
 const logger = require('../logger');
 
+
+/**
+ * @notice Ensures that the upload and output directories exist
+ * @dev Creates the directories if they don't exist
+ * @return {Promise<void>} A promise that resolves when the directories are created
+ * @throws {Error} If there's an issue creating the directories
+ */
+exports.ensureDirectoriesExist = async () => {
+  try {
+    await Promise.all([
+      fs.mkdir(UPLOAD_DIR, { recursive: true }),
+      fs.mkdir(OUTPUT_DIR, { recursive: true })
+    ]);
+    logger.info('Directories created successfully');
+  } catch (error) {
+    logger.error('Failed to create necessary directories:', error);
+    throw error;
+  }
+};
+
 /**
  * @notice Generates a random file name with a .png extension
  * @return {string} A randomly generated file name
