@@ -1,20 +1,19 @@
-// Required imports
-const path = require('path');
 const fs = require('fs').promises;
 const logger = require('../logger');
+const path = require('path');
 const { OUTPUT_DIR } = require('../config');
-const { generateFileNameFromHash, cleanupFiles } = require('../utils');
+const { generateFileNameFromHash, cleanupFiles, generateWaveform, generateSpectrogram } = require('../utils');
+const HTTP_STATUS = { OK: 200, INTERNAL_SERVER_ERROR: 500 };
 
-// HTTP Status Codes
-const HTTP_STATUS = {
-    OK: 200,
-    INTERNAL_SERVER_ERROR: 500,
-};
-
-exports.handleVisualization = (generateFunction) => async (req, res) => {
+exports.handleVisualization = async (req, res) => {
     const inputFile = req.file.path;
     const outputFileName = await generateFileNameFromHash(inputFile) + ".png";
     const outputFile = path.join(OUTPUT_DIR, outputFileName);
+
+    const generateFunction =
+        req.body.visualizationType === 'waveform'
+            ? generateWaveform
+            : generateSpectrogram;
 
     try {
         await generateFunction(inputFile, outputFile);

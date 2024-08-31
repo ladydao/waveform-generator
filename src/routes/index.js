@@ -1,13 +1,10 @@
 const express = require('express');
-const fs = require('fs').promises;
-const { handleVisualization } = require('./handleVisualization');
-const { generateWaveform, generateSpectrogram } = require('../utils');
 const logger = require('../logger');
 const path = require('path');
 const { upload } = require('../middleware/upload');
+const { handleVisualization } = require('./handleVisualization');
 const { validateAudioFile, validateVisualizationType } = require('../middleware/validation');
 
-// Set up application routes
 const setupRoutes = (app) => {
   app.use(express.static(path.join(process.cwd(), 'public')));
 
@@ -15,20 +12,7 @@ const setupRoutes = (app) => {
     res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
   });
 
-  app.post(
-    '/generate',
-    upload(),
-    validateAudioFile,
-    validateVisualizationType,
-    (req, res, next) => {
-      const generateFunction =
-        req.body.visualizationType === 'waveform'
-          ? generateWaveform
-          : generateSpectrogram;
-      handleVisualization(generateFunction)(req, res, next);
-    }
-  );
-
+  app.post('/generate', upload(), validateAudioFile, validateVisualizationType, handleVisualization);
   logger.info('Routes set up successfully');
 };
 
