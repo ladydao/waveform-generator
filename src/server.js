@@ -5,17 +5,13 @@ const { setupRoutes } = require('./routes');
 const { limiter } = require('./middleware/rateLimit');
 const { helmetConfig } = require('./middleware/helmet');
 const { ensureDirectoriesExist } = require('./utils');
+const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 app.use(helmetConfig);
 app.use(limiter);
 setupRoutes(app);
-
-// Add a generic error handler
-app.use((err, req, res, next) => {
-  logger.error(err.message);
-  res.status(500).send('Internal Server Error');
-});
+app.use(errorHandler);
 
 const startServer = async () => {
   try {
