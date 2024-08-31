@@ -15,7 +15,7 @@ exports.ensureDirectoriesExist = async () => {
     await Promise.all([
       fs.mkdir(UPLOAD_DIR, { recursive: true }),
       fs.mkdir(OUTPUT_DIR, { recursive: true }),
-      fs.mkdir(LOG_DIR, { recursive: true }) // Ensure log directory exists
+      fs.mkdir(LOG_DIR, { recursive: true })
     ]);
     logger.info('Directories created successfully');
   } catch (error) {
