@@ -1,4 +1,5 @@
 const winston = require('winston');
+const { LOG_DIR } = require('./config');
 
 const logger = winston.createLogger({
     level: 'info',
@@ -8,8 +9,8 @@ const logger = winston.createLogger({
     ),
     defaultMeta: { service: 'audio-visualization-generator' },
     transports: [
-        new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'logs/combined.log' }),
+        new winston.transports.File({ filename: `${LOG_DIR}/error.log`, level: 'error' }),
+        new winston.transports.File({ filename: `${LOG_DIR}/combined.log` }),
     ],
 });
 

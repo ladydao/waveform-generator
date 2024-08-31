@@ -1,9 +1,6 @@
 node_modules/
-logs/
 
-audio/
-output/
-uploads/
+appdata/
 
 .env
 .vercel
@@ -29,4 +26,6 @@ yarn.lock
 
 # Temporary files
 *.tmp
+
+
 

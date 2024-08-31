@@ -8,7 +8,6 @@ const helmetConfig = require('./middleware/helmet');
 const { ensureDirectoriesExist } = require('./utils');
 
 const app = express();
-
 app.use(helmetConfig);
 app.use(limiter);
 setupRoutes(app);
@@ -26,7 +25,6 @@ const startServer = async () => {
     process.exit(1);
   }
 };
-
 startServer();
 
 module.exports = app;
