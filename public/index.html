@@ -35,20 +35,14 @@
             <div class="mb-4">
                 <p class="mb-2">Choose visualization type:</p>
                 <div class="flex space-x-4">
-                    <label class="inline-flex items-center">
-                        <input type="radio" class="form-radio" name="visualizationType" value="waveform" checked>
-                        <span class="ml-2">Waveform</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="radio" class="form-radio" name="visualizationType" value="spectrogram">
-                        <span class="ml-2">Spectrogram</span>
-                    </label>
+                    <button id="waveformBtn" class="w-1/2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                        Waveform
+                    </button>
+                    <button id="spectrogramBtn" class="w-1/2 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                        Spectrogram
+                    </button>
                 </div>
             </div>
-
-            <button id="generateBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
-                Generate Visualization
-            </button>
 
             <div id="status" class="mt-4 text-center hidden">
                 <div class="flex items-center justify-center">

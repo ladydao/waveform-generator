@@ -111,24 +111,14 @@ document.addEventListener('DOMContentLoaded', () => {
         error.classList.remove('hidden');
     }
 
-    generateBtn.addEventListener('click', () => {
-        if (!selectedFile) {
-            showError('Please select an audio file first.');
-            return;
-        }
-
-        const visualizationType = document.querySelector('input[name="visualizationType"]:checked').value;
-        generateVisualization(selectedFile, visualizationType);
-    });
-
     function generateVisualization(file, type) {
-        const formData = new FormData();
-        formData.append('audio', file);
-        formData.append('visualizationType', type);
-
         status.classList.remove('hidden');
         result.classList.add('hidden');
         error.classList.add('hidden');
+
+        const formData = new FormData();
+        formData.append('audio', file);
+        formData.append('visualizationType', type);
 
         fetch('/generate', {
             method: 'POST',
@@ -136,9 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then(response => {
                 if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.error || 'Error generating visualization');
-                    });
+                    throw new Error('Network response was not ok');
                 }
                 return response.blob();
             })
@@ -146,12 +134,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 const imageUrl = URL.createObjectURL(blob);
                 resultImage.src = imageUrl;
                 downloadBtn.href = imageUrl;
+                downloadBtn.download = `${type}_visualization.png`;
                 result.classList.remove('hidden');
                 status.classList.add('hidden');
             })
-            .catch(err => {
-                showError(err.message);
+            .catch(error => {
+                console.error('Error:', error);
+                showError('An error occurred while generating the visualization.');
                 status.classList.add('hidden');
             });
     }
+
+    const waveformBtn = document.getElementById('waveformBtn');
+    const spectrogramBtn = document.getElementById('spectrogramBtn');
+
+    waveformBtn.addEventListener('click', () => {
+        if (!selectedFile) {
+            showError('Please select an audio file first.');
+            return;
+        }
+        generateVisualization(selectedFile, 'waveform');
+    });
+
+    spectrogramBtn.addEventListener('click', () => {
+        if (!selectedFile) {
+            showError('Please select an audio file first.');
+            return;
+        }
+        generateVisualization(selectedFile, 'spectrogram');
+    });
+
 });
