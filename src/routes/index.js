@@ -1,7 +1,7 @@
 const express = require('express');
 const logger = require('../logger');
 const path = require('path');
-const { upload } = require('../middleware/upload');
+const { handleUpload } = require('../middleware/upload');
 const { handleVisualization } = require('./handleVisualization');
 const { validateAudioFile, validateVisualizationType } = require('../middleware/validation');
 
@@ -12,7 +12,7 @@ const setupRoutes = (app) => {
     res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
   });
 
-  app.post('/generate', upload(), validateAudioFile, validateVisualizationType, handleVisualization);
+  app.post('/generate', handleUpload, validateAudioFile, validateVisualizationType, handleVisualization);
   logger.info('Routes set up successfully');
 };
 
