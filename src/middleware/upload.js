@@ -3,7 +3,7 @@ const path = require('path');
 const { UPLOAD_DIR, FILE_SIZE_LIMIT, ALLOWED_MIME_TYPES } = require('../config');
 const logger = require('../logger');
 
-exports.createUploadMiddleware = () => multer({
+exports.upload = () => multer({
   dest: UPLOAD_DIR,
   limits: { fileSize: FILE_SIZE_LIMIT },
   fileFilter: (req, file, cb) => {
