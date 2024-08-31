@@ -1,5 +1,5 @@
 node_modules/
-appdata/
+appdata/temp_audio/
 
 .env
 .vercel
