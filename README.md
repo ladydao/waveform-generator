@@ -12,8 +12,8 @@ Generate waveform and spectrogram from audio files.
 1. Clone the repository:
 
    ```
-   git clone https://github.com/ladydao/audio-visualization-generator.git
-   cd audio-visualization-generator
+   git clone git@github.com:ladydao/waveform-generator.git
+   cd waveform-generator
    ```
 
 2. Install dependencies:
