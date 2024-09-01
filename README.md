@@ -6,20 +6,24 @@ Generate waveform and spectrogram from audio files.
 
 - Node.js (v18 or later)
 - FFmpeg
+
 ## Installation
 
 1. Clone the repository:
+
    ```
    git clone https://github.com/ladydao/audio-visualization-generator.git
    cd audio-visualization-generator
    ```
 
 2. Install dependencies:
+
    ```
    npm install
    ```
 
 3. Create a `.env` file in the root directory and add the following (adjust as needed):
+
    ```
    PORT=3000
    UPLOAD_DIR=appdata/uploads/
@@ -28,6 +32,7 @@ Generate waveform and spectrogram from audio files.
    ```
 
 4. Start the server:
+
    ```
    npm start
    ```

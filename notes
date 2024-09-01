@@ -1,0 +1,2 @@
+
+curl -X POST -H "Content-Type: multipart/form-data" -F "audio=@./appdata/temp_audio/TRIBE.wav" -F "visualizationType=waveform" http://localhost:3000/generate --output ./appdata/tribe.png
