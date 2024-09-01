@@ -1,6 +1,7 @@
 const { body, validationResult } = require('express-validator');
 const { FILE_SIZE_LIMIT, ALLOWED_MIME_TYPES } = require('../config');
 const logger = require('../logger');
+const path = require('path'); // Assuming path is required for the change
 
 exports.validateAudioFile = [
   body('audio')
@@ -8,7 +9,10 @@ exports.validateAudioFile = [
       if (!req.file) {
         throw new Error('No audio file uploaded');
       }
-      if (!ALLOWED_MIME_TYPES.includes(req.file.mimetype)) {
+      const ext = path.extname(req.file.originalname).toLowerCase();
+      const mimeType = req.file.mimetype === 'application/octet-stream' ? `audio/${ext.slice(1)}` : req.file.mimetype;
+
+      if (!ALLOWED_MIME_TYPES.includes(mimeType) || !['.mp3', '.wav', '.ogg'].includes(ext)) {
         throw new Error('Invalid file type. Only MP3, WAV, and OGG files are allowed.');
       }
       if (req.file.size > FILE_SIZE_LIMIT) {
