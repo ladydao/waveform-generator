@@ -6,14 +6,19 @@ const { generateFileNameFromHash, cleanupFiles, generateWaveform, generateSpectr
 const HTTP_STATUS = { OK: 200, INTERNAL_SERVER_ERROR: 500 };
 
 exports.handleVisualization = async (req, res) => {
-  const inputFile = req.file.path;
-  const outputFileName = await generateFileNameFromHash(inputFile) + ".png";
-  const outputFile = path.join(OUTPUT_DIR, outputFileName);
-
   const generateFunction =
     req.body.visualizationType === 'waveform'
       ? generateWaveform
       : generateSpectrogram;
+
+  const appendType =
+    req.body.visualizationType === 'waveform'
+      ? '_waveform'
+      : '_spectrogram';
+
+  const inputFile = req.file.path;
+  const outputFileName = await generateFileNameFromHash(inputFile) + appendType + ".png";
+  const outputFile = path.join(OUTPUT_DIR, outputFileName);
 
   try {
     await generateFunction(inputFile, outputFile);
