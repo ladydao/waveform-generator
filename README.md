@@ -1,4 +1,4 @@
-# Audio Visualization Generator
+# Audio to Image
 
 Generate waveform and spectrogram from audio files.
 
