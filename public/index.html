@@ -1,70 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Visualization Generator</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio to Image</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
+  </head>
+  <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
-        <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md mx-auto">
-            <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Audio Visualization Generator</h1>
+      <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md mx-auto">
+        <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Audio to Image</h1>
 
-            <div id="drop-zone" class="drop-zone flex items-center justify-center w-full mb-4 p-6 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer">
-                <div class="flex flex-col items-center justify-center">
-                    <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"></path>
-                    </svg>
-                    <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                    <p class="text-xs text-gray-500">MP3, WAV, or OGG (MAX. 100MB)</p>
-                </div>
-            </div>
-
-            <div id="fileInfo" class="mb-4 p-4 bg-gray-100 rounded-lg hidden">
-                <h2 class="font-bold text-lg mb-2">File Information</h2>
-                <p id="fileName"></p>
-                <p id="fileSize"></p>
-                <p id="fileDuration"></p>
-            </div>
-
-            <div id="audioPlayerContainer" class="mb-4 hidden">
-                <audio id="audioPlayer" controls class="w-full"></audio>
-            </div>
-
-            <div class="mb-4">
-                <p class="mb-2">Choose visualization type:</p>
-                <div class="flex space-x-4">
-                    <button id="waveformBtn" class="w-1/2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
-                        Waveform
-                    </button>
-                    <button id="spectrogramBtn" class="w-1/2 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
-                        Spectrogram
-                    </button>
-                </div>
-            </div>
-
-            <div id="status" class="mt-4 text-center hidden">
-                <div class="flex items-center justify-center">
-                    <svg class="animate-spin h-5 w-5 mr-3 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span>Generating visualization...</span>
-                </div>
-            </div>
-
-            <div id="result" class="mt-6 hidden">
-                <img id="resultImage" class="w-full rounded-lg shadow-md" alt="Visualization Result">
-                <a id="downloadBtn" class="mt-4 inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out" download="visualization.png">
-                    Download Image
-                </a>
-            </div>
-
-            <div id="error" class="hidden mt-4 text-red-500 text-center"></div>
+        <div
+          id="drop-zone"
+          class="drop-zone flex items-center justify-center w-full mb-4 p-6 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer"
+        >
+          <div class="flex flex-col items-center justify-center">
+            <svg
+              class="w-8 h-8 mb-4 text-gray-500"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 16"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+              ></path>
+            </svg>
+            <p class="mb-2 text-sm text-gray-500">
+              <span class="font-semibold">Click to upload</span> or drag and drop
+            </p>
+            <p class="text-xs text-gray-500">MP3, WAV, or OGG (MAX. 100MB)</p>
+          </div>
         </div>
+
+        <div id="fileInfo" class="mb-4 p-4 bg-gray-100 rounded-lg hidden">
+          <h2 class="font-bold text-lg mb-2">File Information</h2>
+          <p id="fileName"></p>
+          <p id="fileSize"></p>
+          <p id="fileDuration"></p>
+        </div>
+
+        <div id="audioPlayerContainer" class="mb-4 hidden">
+          <audio id="audioPlayer" controls class="w-full"></audio>
+        </div>
+
+        <div class="mb-4">
+          <p class="mb-2">Choose visualization type:</p>
+          <div class="flex space-x-4">
+            <button
+              id="waveformBtn"
+              class="w-1/2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+            >
+              Waveform
+            </button>
+            <button
+              id="spectrogramBtn"
+              class="w-1/2 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+            >
+              Spectrogram
+            </button>
+          </div>
+        </div>
+
+        <div id="status" class="mt-4 text-center hidden">
+          <div class="flex items-center justify-center">
+            <svg
+              class="animate-spin h-5 w-5 mr-3 text-blue-500"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <span>Generating visualization...</span>
+          </div>
+        </div>
+
+        <div id="result" class="mt-6 hidden">
+          <img id="resultImage" class="w-full rounded-lg shadow-md" alt="Visualization Result" />
+          <a
+            id="downloadBtn"
+            class="mt-4 inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+            download="visualization.png"
+          >
+            Download Image
+          </a>
+        </div>
+
+        <div id="error" class="hidden mt-4 text-red-500 text-center"></div>
+      </div>
     </div>
 
     <script src="js/main.js"></script>
-</body>
+  </body>
 </html>
