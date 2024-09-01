@@ -33,7 +33,7 @@ exports.generateRandomFileName = () => `${crypto.randomBytes(16).toString('hex')
 /**
  * @notice Generates a file name based on the hash of the file contents
  * @param {string} filePath - The path to the file
- * @return {Promise<string>} A promise that resolves to the generated file name
+ * @return {string} A file name string.
  */
 exports.generateFileNameFromHash = async (filePath) => {
   const fileBuffer = await fs.readFile(filePath);
@@ -104,7 +104,7 @@ const generateVisualization = (inputFile, outputFile, params) => {
 
 // FFmpeg parameters for waveform and spectrogram visualizations
 const waveformParams = '-filter_complex "aformat=channel_layouts=mono,compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,showwavespic=s=1920x1080:colors=#333333"';
-const spectralParams = '-lavfi "aformat=channel_layouts=mono,compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,showspectrumpic=s=1920x1080:mode=separate:color=intensity:scale=log:fscale=log:stop=20000:start=20:gain=5:legend=0"';
+const spectralParams = '-lavfi "aformat=channel_layouts=mono,compand=attacks=0:points=-80/-900|-45/-15|-27/-9|-5/-5|0/-2|20/-2:gain=5,showspectrumpic=s=1920x1080:mode=separate:color=intensity:scale=log:fscale=lin:stop=20000:start=20:gain=5:legend=0"';
 
 /**
  * @notice Generates a waveform visualization of an audio file
